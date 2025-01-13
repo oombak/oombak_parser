@@ -34,11 +34,11 @@ typedef void *OombakCtx;
 
 OOMBAK_PARSER_EXPORT OombakCtx oombak_parser_get_ctx();
 
-OOMBAK_PARSER_EXPORT Instance *oombak_parser_parse(const char **source_paths,
+OOMBAK_PARSER_EXPORT Instance *oombak_parser_parse(const char *source_paths,
                                                    const char *top_module_name);
 
 OOMBAK_PARSER_EXPORT Instance *oombak_parser_parse(OombakCtx ctx,
-                                                   const char **source_paths,
+                                                   const char *source_paths,
                                                    const char *top_module_name);
 
 OOMBAK_PARSER_EXPORT bool oombak_parser_free_ctx(OombakCtx context);

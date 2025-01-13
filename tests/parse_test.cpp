@@ -3,11 +3,10 @@
 #include "gtest/gtest.h"
 
 TEST(ParseTest, SvSample1) {
-  const char *source_paths[] = {"fixtures/sv_sample_1/sample.sv",
-                                "fixtures/sv_sample_1/adder.sv"};
+  const char *source_paths =
+      "fixtures/sv_sample_1/sample.sv:fixtures/sv_sample_1/adder.sv";
   const char *top_module_name = "sample";
-  auto root_instance =
-      oombak_parser_parse(source_paths, top_module_name);
+  auto root_instance = oombak_parser_parse(source_paths, top_module_name);
 
   ASSERT_NE(root_instance, (Instance *)NULL);
   EXPECT_EQ(root_instance->name, "root");

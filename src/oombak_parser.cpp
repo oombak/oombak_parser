@@ -8,12 +8,12 @@ OOMBAK_PARSER_EXPORT bool oombak_parser_free_ctx(OombakCtx context) {
 }
 
 OOMBAK_PARSER_EXPORT Instance *
-oombak_parser_parse(const char **source_paths, const char *top_module_name) {
+oombak_parser_parse(const char *source_paths, const char *top_module_name) {
   return NULL;
 }
 
 OOMBAK_PARSER_EXPORT Instance *
-oombak_parser_parse(OombakCtx ctx, const char **source_paths,
+oombak_parser_parse(OombakCtx ctx, const char *source_paths,
                     const char *top_module_name) {
   return NULL;
 }
