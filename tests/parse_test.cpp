@@ -1,0 +1,33 @@
+#include "oombak_parser.h"
+#include "utils.hpp"
+#include "gtest/gtest.h"
+
+TEST(ParseTest, SvSample1) {
+  const char *source_paths[] = {"fixtures/sv_sample_1/sample.sv",
+                                "fixtures/sv_sample_1/adder.sv"};
+  const char *top_module_name = "sample";
+  auto root_instance =
+      oombak_parser_parse(source_paths, top_module_name);
+
+  ASSERT_NE(root_instance, (Instance *)NULL);
+  EXPECT_EQ(root_instance->name, "root");
+  EXPECT_EQ(root_instance->module_name, "sample");
+  EXPECT_EQ(root_instance->parent_instance, (Instance *)NULL);
+
+  Signal expected_signals[] = {{"clk", Input, 1},
+                               {"rst_n", Input, 1},
+                               {"in", Input, 6},
+                               {"out", Output, 6},
+                               {"c", Local, 6}};
+  EXPECT_EQ(root_instance->signals_len, 5);
+  EXPECT_TRUE(isContainsAll(root_instance->signals, root_instance->signals_len,
+                            expected_signals, 5));
+
+  ASSERT_EQ(root_instance->child_instances_len, 1);
+  auto child_instance = root_instance->child_instances[0];
+  ASSERT_EQ(child_instance->parent_instance, root_instance);
+  ASSERT_EQ(child_instance->name, "adder_inst");
+  ASSERT_EQ(child_instance->module_name, "adder");
+  ASSERT_EQ(child_instance->child_instances_len, 0);
+  ASSERT_EQ(child_instance->signals_len, 4);
+}
