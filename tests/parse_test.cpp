@@ -9,8 +9,8 @@ TEST(ParseTest, SvSample1) {
   auto root_instance = oombak_parser_parse(source_paths, top_module_name);
 
   ASSERT_NE(root_instance, (Instance *)NULL);
-  EXPECT_EQ(root_instance->name, "root");
-  EXPECT_EQ(root_instance->module_name, "sample");
+  EXPECT_STREQ(root_instance->name, "sample");
+  EXPECT_STREQ(root_instance->module_name, "sample");
   EXPECT_EQ(root_instance->parent_instance, (Instance *)NULL);
 
   Signal expected_signals[] = {{"clk", Input, 1},
@@ -25,8 +25,8 @@ TEST(ParseTest, SvSample1) {
   ASSERT_EQ(root_instance->child_instances_len, 1);
   auto child_instance = root_instance->child_instances[0];
   ASSERT_EQ(child_instance->parent_instance, root_instance);
-  ASSERT_EQ(child_instance->name, "adder_inst");
-  ASSERT_EQ(child_instance->module_name, "adder");
+  ASSERT_STREQ(child_instance->name, "adder_inst");
+  ASSERT_STREQ(child_instance->module_name, "adder");
   ASSERT_EQ(child_instance->child_instances_len, 0);
   ASSERT_EQ(child_instance->signals_len, 4);
 }

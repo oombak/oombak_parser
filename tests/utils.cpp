@@ -1,7 +1,8 @@
 #include "utils.hpp"
+#include <cstring>
 
 bool operator==(const Signal &lhs, const Signal &rhs) {
-  return (lhs.name == rhs.name) && (lhs.type == rhs.type) &&
+  return (strcmp(lhs.name, rhs.name) == 0) && (lhs.type == rhs.type) &&
          (lhs.width == rhs.width);
 }
 
