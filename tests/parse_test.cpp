@@ -13,11 +13,11 @@ TEST(ParseTest, SvSample1) {
   EXPECT_STREQ(root_instance->module_name, "sample");
   EXPECT_EQ(root_instance->parent_instance, (Instance *)NULL);
 
-  Signal expected_signals[] = {{"clk", Input, 1},
-                               {"rst_n", Input, 1},
-                               {"in", Input, 6},
-                               {"out", Output, 6},
-                               {"c", Local, 6}};
+  Signal expected_signals[] = {{"clk", UnpackedArrPortIn, 1},
+                               {"rst_n", UnpackedArrPortIn, 1},
+                               {"in", UnpackedArrPortIn, 6},
+                               {"out", UnpackedArrPortOut, 6},
+                               {"c", UnpackedArrVarNet, 6}};
   EXPECT_EQ(root_instance->signals_len, 5);
   EXPECT_TRUE(isContainsAll(root_instance->signals, root_instance->signals_len,
                             expected_signals, 5));

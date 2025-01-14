@@ -9,9 +9,9 @@
 #endif
 
 enum SignalType {
-  Input,
-  Output,
-  Local,
+  UnpackedArrPortIn,
+  UnpackedArrPortOut,
+  UnpackedArrVarNet,
 };
 
 struct Signal {

@@ -2,6 +2,7 @@
 
 #include "oombak_parser.h"
 #include "slang/ast/ASTVisitor.h"
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <exception>
@@ -12,6 +13,7 @@ using slang::ast::InstanceSymbol;
 using slang::ast::NetSymbol;
 using slang::ast::PortSymbol;
 using slang::ast::Scope;
+using slang::ast::VariableSymbol;
 using std::string;
 using std::vector;
 
@@ -46,6 +48,7 @@ private:
     vector<Signal> signals;
     append_with_port_signals(signals, symbol);
     append_with_net_signals(signals, symbol);
+    append_with_var_signals(signals, symbol);
     return signals;
   }
 
@@ -91,6 +94,11 @@ private:
     append_with_signals_of_type<NetSymbol>(signals, symbol);
   }
 
+  void append_with_var_signals(vector<Signal> &signals,
+                               const InstanceSymbol &symbol) {
+    append_with_signals_of_type<VariableSymbol>(signals, symbol);
+  }
+
   template <typename T>
   void append_with_signals_of_type(vector<Signal> &signals,
                                    const InstanceSymbol &symbol) {
@@ -98,11 +106,14 @@ private:
          it != symbol.body.membersOfType<T>().end(); it.increment()) {
       Signal sig;
       sig.name = strdup(string(it->name).c_str());
+      if (is_port_with_name_inside(sig.name, signals)) {
+        continue;
+      }
       sig.width = get_signal_width<T>(it);
       if constexpr (std::is_same_v<PortSymbol, T>)
         sig.type = get_port_type(it);
       else
-        sig.type = Local;
+        sig.type = UnpackedArrVarNet;
       signals.push_back(sig);
     }
   }
@@ -110,9 +121,9 @@ private:
   SignalType get_port_type(Scope::specific_symbol_iterator<PortSymbol> symbol) {
     switch (symbol->direction) {
     case slang::ast::ArgumentDirection::In:
-      return Input;
+      return UnpackedArrPortIn;
     case slang::ast::ArgumentDirection::Out:
-      return Output;
+      return UnpackedArrPortOut;
     case slang::ast::ArgumentDirection::InOut:
     case slang::ast::ArgumentDirection::Ref:
       break;
@@ -123,5 +134,24 @@ private:
   template <typename T>
   uint64_t get_signal_width(Scope::specific_symbol_iterator<T> symbol) {
     return symbol->getType().getBitWidth();
+  }
+
+  static bool is_port_with_name_inside(const char *name,
+                                       const vector<Signal> &signals) {
+    return std::find_if(signals.begin(), signals.end(), port_with_name(name)) !=
+           signals.end();
+  }
+
+  static bool is_port(const Signal &s) {
+    return (s.type == UnpackedArrPortOut || s.type == UnpackedArrPortIn);
+  }
+
+  static std::function<bool(Signal)> port_with_name(const char *name) {
+    return [name](Signal s) {
+      if (is_port(s) && strcmp(s.name, name) == 0)
+        return true;
+      else
+        return false;
+    };
   }
 };
