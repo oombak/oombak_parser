@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(oombak_parser CXX)
 
+SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 include(FetchContent)
 FetchContent_Declare(
   slang
@@ -14,7 +16,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_library(oombak_parser src/oombak_parser.cpp)
+add_library(oombak_parser SHARED src/oombak_parser.cpp)
 target_include_directories(oombak_parser PUBLIC include)
 target_link_libraries(oombak_parser PUBLIC slang::slang)
 
