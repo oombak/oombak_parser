@@ -8,6 +8,10 @@
 #define OOMBAK_PARSER_EXPORT
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum SignalType {
   UnpackedArrPortIn,
   UnpackedArrPortOut,
@@ -37,8 +41,12 @@ OOMBAK_PARSER_EXPORT OombakCtx oombak_parser_get_ctx();
 OOMBAK_PARSER_EXPORT Instance *oombak_parser_parse(const char *source_paths,
                                                    const char *top_module_name);
 
-OOMBAK_PARSER_EXPORT Instance *oombak_parser_parse(OombakCtx ctx,
-                                                   const char *source_paths,
-                                                   const char *top_module_name);
+OOMBAK_PARSER_EXPORT Instance *
+oombak_parser_parse_r(OombakCtx ctx, const char *source_paths,
+                      const char *top_module_name);
 
 OOMBAK_PARSER_EXPORT void oombak_parser_free_ctx(OombakCtx ctx);
+
+#ifdef __cplusplus
+}
+#endif
