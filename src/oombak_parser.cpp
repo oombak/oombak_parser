@@ -1,10 +1,15 @@
 #include "oombak_parser.h"
 
+#include "instance_tree_builder.hpp"
 #include "slang/ast/Compilation.h"
+#include "slang/ast/symbols/CompilationUnitSymbols.h"
+#include "slang/syntax/SyntaxTree.h"
 #include <cstdlib>
+#include <exception>
 #include <string_view>
 
 using slang::ast::Compilation;
+using slang::syntax::SyntaxTree;
 
 std::vector<std::string_view>
 from_colon_separated_paths(const char *colon_separated_paths);
@@ -17,6 +22,10 @@ public:
 
 private:
   Instance root_instance;
+
+  void add_syntax_trees(Compilation &compilation,
+                        const std::vector<std::string_view> &source_paths);
+  void check_compilation(Compilation &compilation);
 };
 
 static OombakParser *parser = new OombakParser();
@@ -51,7 +60,27 @@ OombakParser::OombakParser() {}
 Instance *OombakParser::get_instance_tree(
     const std::vector<std::string_view> &source_paths,
     std::string_view top_module_name) {
-  return NULL;
+  InstanceTreeBuilder visitor(&root_instance);
+  Compilation compilation;
+  add_syntax_trees(compilation, source_paths);
+  check_compilation(compilation);
+  compilation.getRoot().visit(visitor);
+  return &root_instance;
+}
+
+void OombakParser::add_syntax_trees(
+    Compilation &compilation,
+    const std::vector<std::string_view> &source_paths) {
+  for (auto path : source_paths) {
+    auto tree = SyntaxTree::fromFile(path).value();
+    compilation.addSyntaxTree(tree);
+  }
+}
+
+void OombakParser::check_compilation(Compilation &compilation) {
+  if (!compilation.getAllDiagnostics().empty()) {
+    throw new std::exception;
+  }
 }
 
 std::vector<std::string_view>
